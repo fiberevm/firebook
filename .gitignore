@@ -1,0 +1,15 @@
+node_modules/
+dist/
+out/
+build/
+coverage/
+*.tsbuildinfo
+.env
+.env.*
+!.env.example
+.DS_Store
+.idea/
+*.log
+
+# instance config (may hold the OIDC client secret); see apps/api/firebook.config.example.json
+firebook.config.json

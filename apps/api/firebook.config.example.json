@@ -1,0 +1,18 @@
+{
+  "appUrl": "https://books.example.com",
+  "apiUrl": "https://api.books.example.com",
+  "auth": {
+    "password": {
+      "enabled": false,
+      "signup": false
+    },
+    "oidc": {
+      "name": "Cloudflare Access",
+      "issuer": "https://your-team.cloudflareaccess.com/cdn-cgi/access/sso/oidc/your-client-id",
+      "clientId": "your-client-id",
+      "scopes": ["openid", "email", "profile"],
+      "autoCreateUsers": true,
+      "allowedEmailDomains": ["example.com"]
+    }
+  }
+}

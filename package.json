@@ -1,0 +1,27 @@
+{
+  "name": "accounting",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "bun run --filter '@accounting/api' --filter '@accounting/web' dev",
+    "dev:api": "bun run --filter '@accounting/api' dev",
+    "dev:web": "bun run --filter '@accounting/web' dev",
+    "dev:marketing": "bun run --filter '@accounting/marketing' dev",
+    "worker": "bun run --filter '@accounting/api' worker",
+    "build": "bun run --filter '*' build",
+    "typecheck": "bun run --filter '*' typecheck",
+    "test": "bun run --filter '@accounting/api' test",
+    "db:generate": "bun run --filter '@accounting/db' generate",
+    "db:migrate": "bun run --filter '@accounting/db' migrate",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "devDependencies": {
+    "prettier": "^3",
+    "typescript": "^7.0.2"
+  }
+}

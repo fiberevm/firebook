@@ -1,0 +1,39 @@
+{
+  "name": "@accounting/api",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "bun --watch cmd/api.ts",
+    "start": "bun cmd/api.ts",
+    "worker": "bun cmd/worker.ts",
+    "migrate": "bun cmd/migrate.ts",
+    "build": "bun build ./cmd/api.ts ./cmd/worker.ts --outdir ./dist --target bun",
+    "test": "ENV=test bun test --preload ./src/test/setup.ts --timeout 30000",
+    "typecheck": "tsc -p ."
+  },
+  "dependencies": {
+    "@accounting/db": "workspace:*",
+    "@accounting/shared": "workspace:*",
+    "@t3-oss/env-core": "^0.13.11",
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.6",
+    "drizzle-orm": "^0.45.4",
+    "express": "^5.3.0",
+    "jsonwebtoken": "^9.0.3",
+    "openid-client": "^6",
+    "oxide.ts": "^1.1.0",
+    "viem": "^2.57.16",
+    "winston": "^3.19.0",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.4.4",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/supertest": "^7.2.1",
+    "jose": "^6.2.15",
+    "supertest": "^7.3.1"
+  }
+}

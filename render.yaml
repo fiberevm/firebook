@@ -1,0 +1,72 @@
+services:
+  - name: api
+    type: web
+    region: ohio
+    runtime: docker
+    plan: starter
+    dockerfilePath: ./apps/api/Dockerfile
+    dockerContext: .
+    healthCheckPath: /health
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: db
+          property: connectionString
+      - key: ENV
+        value: production
+      - key: RPC_URL
+        value: https://eth.merkle.io
+      # must be the same value on every service that issues or checks sessions
+      - key: JWT_SECRET
+        sync: false
+      # optional, see "Self-hosting: sign-in and SSO" in the README
+      - key: OIDC_CLIENT_SECRET
+        sync: false
+  - name: worker
+    type: worker
+    region: ohio
+    runtime: docker
+    plan: starter
+    dockerfilePath: ./apps/api/Dockerfile
+    dockerContext: .
+    dockerCommand: bun apps/api/cmd/worker.ts
+    envVars:
+      - key: JWT_SECRET
+        sync: false
+      - key: DATABASE_URL
+        fromDatabase:
+          name: db
+          property: connectionString
+      - key: ENV
+        value: production
+      - key: RPC_URL
+        value: https://eth.merkle.io
+
+  - name: web
+    type: web
+    runtime: static
+    buildCommand: bun install --frozen-lockfile && bun run --filter @accounting/web build
+    staticPublishPath: ./apps/web/dist
+    routes:
+      # client-side routing
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_ENDPOINT
+        sync: false
+  - name: marketing
+    type: web
+    runtime: static
+    buildCommand: bun install --frozen-lockfile && bun run --filter @accounting/marketing build
+    staticPublishPath: ./apps/marketing/dist
+    envVars:
+      - key: VITE_APP_URL
+        sync: false
+
+databases:
+  - name: db
+    plan: basic-256mb
+    region: ohio
+    # no outside access; add `- source: <your ip>/32` entries to connect from your machine
+    ipAllowList: []
