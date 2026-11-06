@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a2a29"/><stop offset="1" stop-color="#0b0b0b"/></linearGradient>
+    <linearGradient id="fl" x1="0" y1="1" x2="0.2" y2="0"><stop offset="0" stop-color="#f43f1e"/><stop offset="0.5" stop-color="#ff7a1a"/><stop offset="1" stop-color="#ffb938"/></linearGradient>
+    <linearGradient id="pg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#e7e5e0"/></linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="114" fill="url(#bg)"/>
+  <rect x="1.5" y="1.5" width="509" height="509" rx="112.5" fill="none" stroke="#ffffff" stroke-opacity=".09" stroke-width="3"/>
+  <!-- flame -->
+  <path fill="url(#fl)" d="M262 70c4 46 34 74 62 108 26 32 42 64 42 102 0 64-48 104-110 104s-110-40-110-104c0-40 18-72 44-98 2 30 14 48 34 58-8-62 10-118 38-170z"/>
+  <path fill="#ffe7b0" d="M258 236c2 24 18 38 30 56 8 12 12 24 12 36 0 30-20 48-44 48s-44-18-44-48c0-18 8-34 20-46 2 12 8 20 16 24-2-26 2-48 10-70z"/>
+  <!-- open ledger -->
+  <path fill="url(#pg)" d="M84 352c62-22 122-18 172 14 50-32 110-36 172-14v62c-62-20-122-16-172 16-50-32-110-36-172-16z"/>
+  <path fill="none" stroke="#0b0b0b" stroke-opacity=".14" stroke-width="6" stroke-linecap="round" d="M256 368v58M124 372c40-10 76-6 106 8M124 394c40-10 76-6 106 8M282 380c30-14 66-18 106-8M282 402c30-14 66-18 106-8"/>
+</svg>

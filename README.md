@@ -1,6 +1,10 @@
+<p align="center"><img src="docs/brand/icon.svg" alt="" width="96" height="96"></p>
+
 <h1 align="center">Firebook</h1>
 
 <p align="center"><strong>Accounting for crypto companies.</strong><br>Record income and expenses from your backend, valued in USD the moment they happen.</p>
+
+<p align="center"><a href="https://render.com/deploy?repo=https://github.com/fiberevm/firebook"><img src="https://render.com/images/deploy-to-render-button.svg" alt="Deploy to Render"></a></p>
 
 <p align="center"><img src="docs/screenshot.png" alt="The Firebook overview: income, expenses and net for the last 12 months, a cash flow chart broken down by category, and totals by currency" width="100%"></p>
 
@@ -114,4 +118,14 @@ SSO uses the authorization code flow with PKCE, state and nonce, and verifies th
 
 ## Deploy
 
-`render.yaml` is a [Render](https://render.com) blueprint: the API and price worker are built from `apps/api/Dockerfile` with the repo root as the Docker context (the worker overrides the command), the dashboard and landing page are static sites, plus a Postgres database. Set `JWT_SECRET` (the same value on the API and worker), `VITE_API_ENDPOINT` on the dashboard and `VITE_APP_URL` on the landing page.
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/fiberevm/firebook)
+
+The button creates everything in [`render.yaml`](render.yaml): the API and the price worker (Docker, built from `apps/api/Dockerfile` with the repo root as the context), the dashboard and the landing page (static sites), and a Postgres database. The API runs migrations when it starts, and `JWT_SECRET` is generated for you.
+
+The two static sites need to know where the other services live, which Render only knows after the first deploy:
+
+1. Click the button and create the blueprint. Leave `VITE_API_ENDPOINT` and `VITE_APP_URL` empty if you don't know the URLs yet.
+2. When it's done, copy the URL of the **api** service (e.g. `https://api-xxxx.onrender.com`) into `VITE_API_ENDPOINT` on the **web** service, and the URL of **web** into `VITE_APP_URL` on **marketing**.
+3. Redeploy web and marketing so the URLs are built in.
+
+The API and worker use Render's Starter plan and the database Basic-256mb, which are paid; change the `plan` fields in `render.yaml` to pick others. The database accepts no outside connections until you add your IP to `ipAllowList`. To use SSO, add `firebook.config.json` (see [above](#self-hosting-sign-in-and-sso)) as a [Secret File](https://render.com/docs/configure-environment-variables#secret-files) on the api service, then set `FIREBOOK_CONFIG=/etc/secrets/firebook.config.json` and `OIDC_CLIENT_SECRET` there.

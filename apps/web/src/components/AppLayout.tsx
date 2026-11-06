@@ -14,12 +14,8 @@ const navItemClass = (isActive: boolean) =>
     isActive ? "bg-[#e7e7e5] text-neutral-950" : "text-neutral-600 hover:bg-[#ececea] hover:text-neutral-950",
   ].join(" ");
 
-export function BrandMark({ className = "size-7 text-xs" }: { className?: string }) {
-  return (
-    <div className={`grid shrink-0 place-items-center rounded-md bg-neutral-950 font-bold text-white ${className}`} aria-hidden="true">
-      F
-    </div>
-  );
+export function BrandMark({ className = "size-7" }: { className?: string }) {
+  return <img src="/favicon.svg" alt="" className={`shrink-0 ${className}`} />;
 }
 
 /** Workspace identity that doubles as the organization switcher. */
@@ -206,7 +202,7 @@ export function AppLayout() {
           >
             <MenuIcon className="size-5" />
           </button>
-          <BrandMark className="size-6 text-[10px]" />
+          <BrandMark className="size-6" />
           <p className="text-sm font-semibold text-neutral-900">Firebook</p>
         </header>
 
