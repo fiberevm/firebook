@@ -212,8 +212,8 @@ function Tooltip({ datum, series, interval, x }: { datum: CashflowDatum; series:
 
   return (
     <div
-      className="pointer-events-none absolute top-2 z-10 w-64 rounded-lg border border-neutral-200 bg-white px-3 py-2 text-xs shadow-[0_8px_24px_rgba(15,23,42,0.12)]"
-      style={{ left: `clamp(0px, calc(${x * 100}% - 8rem), calc(100% - 16rem))` }}
+      className="pointer-events-none absolute top-2 z-10 w-72 rounded-lg border border-neutral-200 bg-white px-3 py-2 text-xs shadow-[0_8px_24px_rgba(15,23,42,0.12)]"
+      style={{ left: `clamp(0px, calc(${x * 100}% - 9rem), calc(100% - 18rem))` }}
     >
       <p className="font-medium text-neutral-900">{formatPeriod(datum.period, interval)}</p>
       {rows.length === 0 ? (

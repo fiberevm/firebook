@@ -1,6 +1,31 @@
-# Firebook accounting
+<h1 align="center">Firebook</h1>
 
-Bun workspaces monorepo.
+<p align="center"><strong>Accounting for crypto companies.</strong><br>Record income and expenses from your backend, valued in USD the moment they happen.</p>
+
+<p align="center"><img src="docs/screenshot.png" alt="The Firebook overview: income, expenses and net for the last 12 months, a cash flow chart broken down by category, and totals by currency" width="100%"></p>
+
+## What it is
+
+Crypto businesses get paid and pay out in tokens whose price moves every minute, so "how much did we make this month?" is surprisingly hard to answer. Firebook is a small ledger built for that question.
+
+Your backend sends each payment to the Firebook API as it happens: an amount, a currency, whether it's income or an expense, and optionally a category, tags and metadata. Firebook records the USD value at that moment, so your books reflect what the money was actually worth when it moved, not what it's worth today.
+
+- **USD value at the time of the entry.** ETH is priced live from the Uniswap V3 USDC/ETH pool, and USD is 1:1. For anything else, or when you already know the exact value, pass `usdValue`.
+- **Cash flow by category.** The overview breaks income and expenses down by category per day, week or month, and you can switch categories on and off.
+- **An entry feed you can slice.** Filter by `key:value` tags, and open any entry to see its value, tags and metadata.
+- **Built for teams.** Multiple organizations, admin and member roles, and API keys scoped to each organization.
+- **Self-hostable.** Sign in with your own identity provider over OIDC (Cloudflare Access, Okta, Google…) and turn passwords off. See [Self-hosting](#self-hosting-sign-in-and-sso).
+
+```bash
+curl https://api.firebook.io/v1/entries \
+  -H "Authorization: Bearer $FIREBOOK_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{ "amount": 0.5, "currency": "eth", "type": "income", "category": "consulting", "tags": ["client:acme"] }'
+```
+
+## Repository
+
+A [Bun](https://bun.sh) workspaces monorepo.
 
 | Path              | What                                                                                              |
 | ----------------- | ------------------------------------------------------------------------------------------------- |
@@ -10,7 +35,9 @@ Bun workspaces monorepo.
 | `packages/db`     | Drizzle schema, migrations and Postgres client                                                    |
 | `packages/shared` | API response types and zod request schemas used by both apps                                      |
 
-## Setup
+## Running it locally
+
+You need [Bun](https://bun.sh) 1.4+ and Postgres.
 
 ```bash
 bun install
@@ -19,7 +46,7 @@ cp apps/web/.env.example apps/web/.env.local
 createdb accounting && createdb accounting_test
 ```
 
-## Commands (from the repo root)
+### Commands (from the repo root)
 
 ```bash
 bun run dev          # API on :3000 (runs migrations on boot) + web on :5173
@@ -29,11 +56,14 @@ bun run test         # API tests against DATABASE_TEST_URL (tables are truncated
 bun run typecheck    # all packages
 bun run build        # all packages
 bun run db:generate  # new migration after editing packages/db/src/schema.ts
+bun run format       # prettier
 ```
 
 `TEST_NETWORK=1 bun run test` also runs the test that reads the live Uniswap pool over `RPC_URL`.
 
-## Public API
+## API
+
+Create an API key on the **API keys** page, then:
 
 ```
 POST /v1/entries
@@ -84,4 +114,4 @@ SSO uses the authorization code flow with PKCE, state and nonce, and verifies th
 
 ## Deploy
 
-`render.yaml` builds both services from `apps/api/Dockerfile` with the repo root as the Docker context; the worker overrides the command.
+`render.yaml` is a [Render](https://render.com) blueprint: the API and price worker are built from `apps/api/Dockerfile` with the repo root as the Docker context (the worker overrides the command), the dashboard and landing page are static sites, plus a Postgres database. Set `JWT_SECRET` (the same value on the API and worker), `VITE_API_ENDPOINT` on the dashboard and `VITE_APP_URL` on the landing page.
