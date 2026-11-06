@@ -1,7 +1,7 @@
 import { SUPPORTED_CURRENCIES } from "@accounting/shared/currencies";
 import { useState, type ReactNode } from "react";
 import { Link, useParams } from "react-router";
-import { apiEndpoint } from "../api/api";
+import { publicApiUrl } from "../api/api";
 import { Card, PageHeader, SectionHeading, focusRing, td, th, writeToClipboard } from "../components/ui/primitives";
 import { useApiKeys } from "../hooks/useApiKeys";
 
@@ -122,6 +122,14 @@ const parameters: { name: string; type: string; required: boolean; description: 
   { name: "metadata", type: "object", required: false, description: "Flat object of string, number or boolean values, stored with the entry." },
 ];
 
+const mcpTools = [
+  ["record_entries", "Record one or more income or expense entries, valued in USD like the API does."],
+  ["list_entries", "List entries, newest first, filtered by date, tags or category."],
+  ["get_statement", "Total income, expenses and net in USD, with a per-currency breakdown."],
+  ["get_category_breakdown", "USD totals per category, per day, week or month."],
+  ["delete_entry", "Delete an entry recorded by mistake."],
+];
+
 function Docs() {
   const { orgId = "" } = useParams();
   const { apiKeys } = useApiKeys(orgId);
@@ -136,12 +144,12 @@ function Docs() {
   "metadata": { "invoice": "INV-1042" }
 }`;
 
-  const curl = `curl ${apiEndpoint}/v1/entries \\
+  const curl = `curl ${publicApiUrl}/v1/entries \\
   -H "Authorization: Bearer ${apiKey}" \\
   -H "Content-Type: application/json" \\
   -d '${body.replace(/\n/g, "\n  ")}'`;
 
-  const js = `const res = await fetch("${apiEndpoint}/v1/entries", {
+  const js = `const res = await fetch("${publicApiUrl}/v1/entries", {
   method: "POST",
   headers: {
     Authorization: "Bearer ${apiKey}",
@@ -151,6 +159,19 @@ function Docs() {
 });
 
 const [entry] = await res.json();`;
+
+  const mcpUrl = `${publicApiUrl}/mcp`;
+  const mcpClaudeCode = `claude mcp add --transport http firebook ${mcpUrl} \\
+  --header "Authorization: Bearer ${apiKey}"`;
+  const mcpJson = `{
+  "mcpServers": {
+    "firebook": {
+      "type": "http",
+      "url": "${mcpUrl}",
+      "headers": { "Authorization": "Bearer ${apiKey}" }
+    }
+  }
+}`;
 
   const response = `[
   {
@@ -246,6 +267,52 @@ const [entry] = await res.json();`;
               <CodeBlock tabs={[{ label: "200 OK", code: response }]} />
             </div>
           </div>
+        </section>
+
+        <section aria-labelledby="mcp-title">
+          <SectionHeading
+            id="mcp-title"
+            title="MCP server"
+            description="Let an AI agent record entries and answer questions about your books, using the same API keys."
+          />
+          <div className="mt-4">
+            <Endpoint method="POST" path="/mcp" />
+          </div>
+          <p className="mt-3 text-sm leading-6 text-neutral-700">
+            A <Code>Streamable HTTP</Code> MCP server. Add it to Claude Code, Cursor or any MCP client with an API key in the <Code>Authorization</Code> header.
+            The key decides which organization the agent works in.
+          </p>
+          <div className="mt-4">
+            <CodeBlock
+              tabs={[
+                { label: "Claude Code", code: mcpClaudeCode },
+                { label: "JSON config", code: mcpJson },
+              ]}
+            />
+          </div>
+          <Card className="mt-4">
+            <table className="w-full border-collapse text-left text-xs">
+              <caption className="sr-only">MCP tools</caption>
+              <thead className="bg-neutral-50/50 text-neutral-500">
+                <tr className="border-b border-neutral-200">
+                  <th className={`${th} w-52`} scope="col">
+                    Tool
+                  </th>
+                  <th className={th} scope="col">
+                    What it does
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-neutral-200 text-neutral-700">
+                {mcpTools.map(([name, description]) => (
+                  <tr key={name} className="align-top">
+                    <td className={`${td} py-2.5 font-mono text-[12px] font-medium text-neutral-900`}>{name}</td>
+                    <td className={`${td} py-2.5 leading-5`}>{description}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </Card>
         </section>
 
         <section aria-labelledby="errors-title">

@@ -1,6 +1,11 @@
 import type { ApiError } from "@accounting/shared";
 
-export const apiEndpoint = import.meta.env.VITE_API_ENDPOINT ?? "http://localhost:3000";
+// production builds are served by the API itself, so requests go to the same origin.
+// In development the dashboard runs on Vite (:5173) and the API on :3000.
+export const apiEndpoint = (import.meta.env.VITE_API_ENDPOINT ?? (import.meta.env.DEV ? "http://localhost:3000" : "")).replace(/\/$/, "");
+
+// absolute API URL, for showing in docs and code samples
+export const publicApiUrl = apiEndpoint || window.location.origin;
 
 export const getUserToken = (): string | null => {
   return window.localStorage.getItem("user_token");

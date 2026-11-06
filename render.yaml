@@ -1,4 +1,5 @@
 services:
+  # the API also serves the dashboard, built into the same image
   - name: api
     type: web
     region: ohio
@@ -46,21 +47,6 @@ services:
       - key: RPC_URL
         value: https://eth.merkle.io
 
-  - name: web
-    type: web
-    runtime: static
-    # static sites build with Node, so Bun is fetched from npm
-    buildCommand: npx --yes bun@1.4.4 install --frozen-lockfile && npx --yes bun@1.4.4 run --filter @accounting/web build
-    staticPublishPath: ./apps/web/dist
-    routes:
-      # client-side routing
-      - type: rewrite
-        source: /*
-        destination: /index.html
-    envVars:
-      # public URL of the api service, e.g. https://api-xxxx.onrender.com
-      - key: VITE_API_ENDPOINT
-        sync: false
   - name: marketing
     type: web
     runtime: static
@@ -68,7 +54,7 @@ services:
     buildCommand: npx --yes bun@1.4.4 install --frozen-lockfile && npx --yes bun@1.4.4 run --filter @accounting/marketing build
     staticPublishPath: ./apps/marketing/dist
     envVars:
-      # public URL of the web service, where the sign up buttons point
+      # public URL of the api service (which serves the dashboard), where the sign up buttons point
       - key: VITE_APP_URL
         sync: false
 

@@ -13,6 +13,7 @@
     "dev:marketing": "bun run --filter '@accounting/marketing' dev",
     "worker": "bun run --filter '@accounting/api' worker",
     "build": "bun run --filter '*' build",
+    "start": "bun run --filter '@accounting/api' start",
     "typecheck": "bun run --filter '*' typecheck",
     "test": "bun run --filter '@accounting/api' test",
     "db:generate": "bun run --filter '@accounting/db' generate",

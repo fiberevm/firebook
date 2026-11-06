@@ -107,6 +107,12 @@ describe("auth settings", () => {
     );
   });
 
+  it("sends SSO back to the API's own URL by default, since it serves the dashboard", () => {
+    expect(parseConfig({ apiUrl: "https://books.example.com/" }).appUrl).toBe("https://books.example.com");
+    expect(parseConfig({}).appUrl).toBe("http://localhost:5173");
+    expect(parseConfig({ apiUrl: "https://api.example.com", appUrl: "https://app.example.com" }).appUrl).toBe("https://app.example.com");
+  });
+
   it("refuses a config where nobody could sign in", () => {
     expect(() => parseConfig({ auth: { password: { enabled: false } } })).toThrow(/nobody could sign in/);
   });

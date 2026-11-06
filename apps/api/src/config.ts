@@ -25,10 +25,12 @@ const oidcSchema = z.object({
 
 const configSchema = z
   .object({
-    // public URL of the web app, where SSO sends people back to
-    appUrl: z.url().default("http://localhost:5173"),
-    // public URL of this API; the SSO redirect URI is `<apiUrl>/auth/oidc/callback`
-    apiUrl: z.url().default("http://localhost:3000"),
+    // public URL of the dashboard, where SSO sends people back to.
+    // Defaults to apiUrl when that is set, since the API serves the built dashboard
+    appUrl: z.url().optional(),
+    // public URL of this API; the SSO redirect URI is `<apiUrl>/auth/oidc/callback`.
+    // Render sets RENDER_EXTERNAL_URL to the service's public URL
+    apiUrl: z.url().default(process.env.RENDER_EXTERNAL_URL || "http://localhost:3000"),
     auth: z
       .object({
         password: z
@@ -48,7 +50,7 @@ const configSchema = z
     path: ["auth"],
   });
 
-export type Config = z.infer<typeof configSchema>;
+export type Config = Omit<z.infer<typeof configSchema>, "appUrl"> & { appUrl: string };
 export type OidcConfig = z.infer<typeof oidcSchema>;
 
 export function parseConfig(raw: unknown, source = "config"): Config {
@@ -56,7 +58,10 @@ export function parseConfig(raw: unknown, source = "config"): Config {
   if (!result.success) {
     throw new Error(`Invalid ${source}:\n${z.prettifyError(result.error)}`);
   }
-  const config = result.data;
+  // with a real public URL the dashboard is served by this API; locally it runs on Vite
+  const apiUrlIsPublic = (typeof raw === "object" && raw !== null && "apiUrl" in raw) || !!process.env.RENDER_EXTERNAL_URL;
+  const appUrl = result.data.appUrl ?? (apiUrlIsPublic ? result.data.apiUrl : "http://localhost:5173");
+  const config: Config = { ...result.data, appUrl };
   // trailing slashes would produce `//auth/...` URLs
   config.appUrl = config.appUrl.replace(/\/+$/, "");
   config.apiUrl = config.apiUrl.replace(/\/+$/, "");

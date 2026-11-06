@@ -1,6 +1,5 @@
 {
-  "appUrl": "https://books.example.com",
-  "apiUrl": "https://api.books.example.com",
+  "apiUrl": "https://books.example.com",
   "auth": {
     "password": {
       "enabled": false,
