@@ -47,17 +47,6 @@ services:
       - key: RPC_URL
         value: https://eth.merkle.io
 
-  - name: marketing
-    type: web
-    runtime: static
-    # static sites build with Node, so Bun is fetched from npm
-    buildCommand: npx --yes bun@1.4.4 install --frozen-lockfile && npx --yes bun@1.4.4 run --filter @accounting/marketing build
-    staticPublishPath: ./apps/marketing/dist
-    envVars:
-      # public URL of the api service (which serves the dashboard), where the sign up buttons point
-      - key: VITE_APP_URL
-        sync: false
-
 databases:
   - name: db
     plan: basic-256mb

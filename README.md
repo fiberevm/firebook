@@ -139,9 +139,9 @@ SSO uses the authorization code flow with PKCE, state and nonce, and verifies th
 
 [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/fiberevm/firebook)
 
-The button creates everything in [`render.yaml`](render.yaml): the **api** service, which also serves the dashboard, the price **worker**, the **marketing** landing page and a Postgres database. The API and worker share one Docker image (`apps/api/Dockerfile`, built from the repo root), which builds the dashboard in. The API runs migrations when it starts, and `JWT_SECRET` is generated for you. Once it's deployed, open the api service's URL to sign up.
+The button creates everything in [`render.yaml`](render.yaml): the **api** service, which also serves the dashboard, the price **worker** and a Postgres database. The API and worker share one Docker image (`apps/api/Dockerfile`, built from the repo root), which builds the dashboard in. The API runs migrations when it starts, and `JWT_SECRET` is generated for you. Once it's deployed, open the api service's URL to sign up.
 
-The landing page's sign up buttons need the dashboard's URL, which Render only knows after the first deploy. Leave `VITE_APP_URL` empty when you create the blueprint, then set it to the api service's URL (e.g. `https://api-xxxx.onrender.com`) and redeploy marketing.
+The landing page (`apps/marketing`) isn't part of the blueprint. It's a static build you can host anywhere: `VITE_APP_URL=https://<your-firebook> bun run --filter @accounting/marketing build`, then publish `apps/marketing/dist`.
 
 The API and worker use Render's Starter plan and the database Basic-256mb, which are paid; change the `plan` fields in `render.yaml` to pick others. The database accepts no outside connections until you add your IP to `ipAllowList`. To use SSO, add `firebook.config.json` (see [above](#self-hosting-sign-in-and-sso)) as a [Secret File](https://render.com/docs/configure-environment-variables#secret-files) on the api service, then set `FIREBOOK_CONFIG=/etc/secrets/firebook.config.json` and `OIDC_CLIENT_SECRET` there. `apiUrl` defaults to the service's Render URL, so you only need to set it for a custom domain.
 
